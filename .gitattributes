@@ -1,0 +1,30 @@
+# Text
+*               text=auto
+
+# ML
+*.dtd           text
+*.json          text
+*.xhtml         text
+*.xml           text
+*.yml           text
+*.yaml          text
+
+# Bin
+*.7z            -text -diff
+*.a             -text -diff
+*.gpg           -text -diff
+*.gz            -text -diff
+*.o             -text -diff
+*.out           -text -diff
+*.pdf           -text -diff
+*.png           -text -diff
+*.so            -text -diff
+*.tar           -text -diff
+*.zip           -text -diff
+
+# LF
+*.sh            text eol=lf
+
+# CRLF
+*.bat           text eol=crlf
+*.cmd           text eol=crlf
