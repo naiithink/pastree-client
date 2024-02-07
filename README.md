@@ -12,11 +12,16 @@ The **Pastree Client** source
 Pastree uses the **Directory Exchange Protocol (DXP)** for reading,
 exchanging, and forming directory trees between hosts.
 
-## Author
+## Student Author
 
 **Potsawat Thinkanwatthana**  
 B.S. in Computer Science  
 Kasetsart University, Bangkok, Thailand.
+
+## Source Code
+
+Some of the code and concepts is based on my "trials and errors" and side projects.
+Please refer to the [primary Pastree repository](https://github.com/naiithink/pastree) for the full list of references.
 
 ## Contributing
 
