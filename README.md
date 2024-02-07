@@ -18,6 +18,10 @@ exchanging, and forming directory trees between hosts.
 B.S. in Computer Science  
 Kasetsart University, Bangkok, Thailand.
 
+## **Directory Exchange Protocol (DXP)**
+
+DXP Repository: [github.com/naiithink/dxp](https://github.com/naiithink/dxp)
+
 ## Source Code
 
 Some of the code and concepts is based on my "trials and errors" and side projects.
