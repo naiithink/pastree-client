@@ -51,6 +51,10 @@ RUN     DEFAULT_EDITOR_PATH=$(which ${DEFAULT_EDITOR}) \
 # Project files
 COPY    --chown=${UID0_NAME}:${GID0_NAME} --chmod=775 client /home/${UID0_NAME}/programs/pastree
 
+# Build project
+RUN     make -C /home/${UID0_NAME}/programs/pastree \
+        && ln -s /home/${UID0_NAME}/programs/pastree/client /usr/local/bin/client
+
 # Default user and working directory
 USER    ${UID0_NAME}
 WORKDIR /home/${UID0_NAME}
