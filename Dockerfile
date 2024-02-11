@@ -49,7 +49,7 @@ RUN     DEFAULT_EDITOR_PATH=$(which ${DEFAULT_EDITOR}) \
         && update-alternatives --set editor ${DEFAULT_EDITOR_PATH}
 
 # Project files
-COPY    --chown=${UID0_NAME}:${GID0_NAME} --chmod=775 client /home/${UID0_NAME}/programs/pastree
+COPY    --chown=${UID0_NAME}:${GID0_NAME} --chmod=775 src /home/${UID0_NAME}/programs/pastree
 
 # Build project
 RUN     make -C /home/${UID0_NAME}/programs/pastree \

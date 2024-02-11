@@ -1,5 +1,6 @@
 CC		:= clang
-CFLAGS	:= ""
+CFLAGS	:=
+LDFLAGS	= -lcrypt -lmagic -lssl
 OUT		:= client
 
 .PHONY:	all clean .FORCE
@@ -7,7 +8,7 @@ OUT		:= client
 all: clean $(OUT)
 
 %: %.c
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
 
 clean:
 	@rm -rf $(OUT)
