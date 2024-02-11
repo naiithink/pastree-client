@@ -1,5 +1,6 @@
 /**
- * Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing <https://www.rfc-editor.org/rfc/rfc7230>
+ * Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing
+ * <https://www.rfc-editor.org/rfc/rfc7230>
  */
 
 #include <errno.h>
@@ -16,19 +17,18 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
+#define SERVER_PORT 80
 
-#define     SERVER_PORT         80
-
-#define     MAXLINE             4096
-#define     SA                  struct sockaddr
+#define MAXLINE     4096
+#define SA          struct sockaddr
 
 int main(int argc, char **argv)
 {
-    int                     sockfd, n;
-    int                     sendbytes;
-    struct sockaddr_in      servaddr;
-    char                    sendline[MAXLINE];
-    char                    recvline[MAXLINE];
+    int                sockfd, n;
+    int                sendbytes;
+    struct sockaddr_in servaddr;
+    char               sendline[MAXLINE];
+    char               recvline[MAXLINE];
 
     if (argc != 2)
     {
@@ -52,15 +52,17 @@ int main(int argc, char **argv)
 
     /**
      * Port
-     * 
+     *
      * htons    := host to network, short
-     *          ::= Converts to the network standard byte order (from big-endian or little-endian)
+     *          ::= Converts to the network standard byte order (from big-endian
+     * or little-endian)
      */
-    servaddr.sin_port   = htons(SERVER_PORT);
+    servaddr.sin_port = htons(SERVER_PORT);
 
     /**
-     * Converts text representation of IP address into the binary representation of the address
-     * 
+     * Converts text representation of IP address into the binary representation
+     * of the address
+     *
      * "1.2.3.4" => [1,2,3,4]
      */
     if (inet_pton(AF_INET, argv[1], &servaddr.sin_addr) <= 0)
@@ -80,18 +82,19 @@ int main(int argc, char **argv)
 
     /**
      * HTTP requests
-     * 
-     * 1.       Start line    :=      <HTTP_METHOD> <request_target> <HTTP/version>
+     *
+     * 1.       Start line    :=      <HTTP_METHOD> <request_target>
+     * <HTTP/version>
      * 2. (opt) Headers       :=      [<Header> ":" <value>]*
      * 3.       An empty line
      * 4. (opt) Body
-     * 
+     *
      * Use 'CRLF' as NL <https://www.rfc-editor.org/rfc/rfc7230#section-3>
-     * 
+     *
      * This instance:
      * --
      * GET / HTTP/1.1
-     * 
+     *
      */
     snprintf(sendline, MAXLINE, "GET / HTTP/1.1\r\n\r\n");
     sendbytes = strlen(sendline);
