@@ -1,5 +1,5 @@
 CC		:= clang
-CFLAGS	:=
+CFLAGS	=
 LDFLAGS	= -lcrypto -lmagic -lssl
 OUT		:= client
 
