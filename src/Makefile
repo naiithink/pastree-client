@@ -1,6 +1,6 @@
 CC		:= clang
 CFLAGS	=
-LDFLAGS	= -lcrypto -lmagic -lssl
+LDFLAGS	= -lcrypto -ldxp -lmagic -lssl
 OUT		:= client
 
 .PHONY:	all clean .FORCE
