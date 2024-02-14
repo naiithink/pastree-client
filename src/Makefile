@@ -8,7 +8,7 @@ OUT		:= client
 all: clean $(OUT)
 
 %: %.c
-	$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
+	$(CC) $(CFLAGS) $< -o $@ $(LDFLAGS)
 
 clean:
 	@rm -rf $(OUT)
