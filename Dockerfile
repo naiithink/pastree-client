@@ -1,73 +1,50 @@
-FROM    ubuntu:jammy
+ARG     PASTREE_BASE_IMAGE
+FROM    ${PASTREE_BASE_IMAGE}
 
-# Build Arguments
-ARG     LIBDXP_GIT_REMOTE_URL
-ARG     LIBDXP_GIT_REF
+# APT-GET context
+ARG     DEBIAN_FRONTEND=noninteractive
+ARG     APTGET_OPTS="-y --no-install-recommends"
+
+# Set preferences
 ARG     DEFAULT_CC
 ARG     DEFAULT_EDITOR
+RUN     echo "export CC=\"${DEFAULT_CC}\"" >> /etc/bash.bashrc
+RUN     DEFAULT_EDITOR_PATH=$(which ${DEFAULT_EDITOR}) \
+        && update-alternatives --install /usr/bin/editor editor ${DEFAULT_EDITOR_PATH} 100 \
+        && update-alternatives --set editor ${DEFAULT_EDITOR_PATH}
+
+# Set 'root' password
 ARG     ROOT_PWD
+RUN     echo "root:${ROOT_PWD}" | chpasswd
+
+# Groups
 ARG     GID0
 ARG     GID0_NAME
+RUN     addgroup --gid ${GID0} ${GID0_NAME}
+
+# Users
 ARG     UID0
 ARG     UID0_PWD
 ARG     UID0_NAME
 ARG     UID0_GECOS
-
-# Set 'root' password
-RUN     echo "root:${ROOT_PWD}" | chpasswd
-
-# APT-GET options
-ARG     APTGET_OPTS="-y --no-install-recommends"
-ARG     APTGET_INSTALL="apt-get install ${APTGET_OPTS}"
-
-# Update APT-GET package lists
-RUN     export DEBIAN_FRONTEND=noninteractive \
-        && apt-get update ${APTGET_OPTS} \
-        && apt-get upgrade ${APTGET_OPTS}
-
-# Users & groups
-RUN     addgroup --gid ${GID0} ${GID0_NAME} \
-        && adduser --uid ${UID0} --gid ${GID0} --gecos "${UID0_GECOS}" ${UID0_NAME} \
+RUN     adduser --uid ${UID0} --gid ${GID0} --gecos "${UID0_GECOS}" ${UID0_NAME} \
         && echo "${UID0_NAME}:${UID0_PWD}" | chpasswd \
         && apt-get install ${APTGET_OPTS} sudo \
         && echo "root ALL=(ALL) ALL" >> /etc/sudoers \
         && echo "${UID0_NAME} ALL=(ALL) ALL" >> /etc/sudoers
 
-# Essential packages
-RUN     apt-get install ${APTGET_OPTS} build-essential clang emacs-nox git network-manager vim
-
-# Libraries & other packages
-RUN     apt-get ${APTGET_OPTS} clean \
-        && apt-get ${APTGET_OPTS} autoremove
-
-RUN     apt-get install ${APTGET_OPTS} libmagic-dev libssl-dev \
-        && apt-get install ${APTGET_OPTS} curl wget \
-        && apt-get install ${APTGET_OPTS} python3 python3-pip
-
-# Set preferences
-RUN     echo "export CC=\"${DEFAULT_CC}\"" >> /etc/bash.bashrc
-
-RUN     DEFAULT_EDITOR_PATH=$(which ${DEFAULT_EDITOR}) \
-        && update-alternatives --install /usr/bin/editor editor ${DEFAULT_EDITOR_PATH} 100 \
-        && update-alternatives --set editor ${DEFAULT_EDITOR_PATH}
-
-# Clone, build, and install libdxp
-ENV     LIBDXP_PREFIX="/usr/local"
-ENV     LIBDXP_PATH="${LIBDXP_PREFIX}/lib/libdxp"
-RUN     git clone --recurse-submodules ${LIBDXP_GIT_REMOTE_URL} ${LIBDXP_PATH} \
-        && cd ${LIBDXP_PATH} \
-        && git checkout ${LIBDXP_GIT_REF} \
-        && make \
-        && mkdir -p ${LIBDXP_PREFIX}/include \
-        && ln -s ${LIBDXP_PATH}/lib/* ${LIBDXP_PREFIX}/lib \
-        && ln -s ${LIBDXP_PATH}/include/* ${LIBDXP_PREFIX}/include
-
 # Project files
-COPY    --chown=${UID0_NAME}:${GID0_NAME} --chmod=775 src /home/${UID0_NAME}/programs/pastree
+ARG     PROJECT_DIR_PREFIX="/opt/pastree"
+COPY    src ${PROJECT_DIR_PREFIX}
 
 # Build project
-RUN     make -C /home/${UID0_NAME}/programs/pastree \
-        && ln -s /home/${UID0_NAME}/programs/pastree/client /usr/local/bin/client
+# Subject to change. ${PROJECT_DIR_PREFIX}/client* -> ${PROJECT_DIR_PREFIX}/bin/client*
+RUN     make -C ${PROJECT_DIR_PREFIX} \
+        && echo "export PATH=\"${PROJECT_DIR_PREFIX}:\${PATH}\"" >> /etc/bash.bashrc
+
+# Final clean up
+RUN     apt-get ${APTGET_OPTS} clean \
+        && apt-get ${APTGET_OPTS} autoremove
 
 # Default user and working directory
 USER    ${UID0_NAME}
